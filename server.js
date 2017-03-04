@@ -1,10 +1,12 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 
-var googleMapsKey = 'AIzaSyAFne0T1t3aYW8AtWoevIHMEO0EmsW851M';
+var MICROSOFT_ID = '3f593c14-a4b3-4dc2-a883-5e46e2b7550b';
+var MICROSOFT_PASS = 'ayphH3VcKA6FqOrXXG5bW8a';
+var GOOGLEMAPS_ID = 'AIzaSyAFne0T1t3aYW8AtWoevIHMEO0EmsW851M';
 var dummyImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Seattlenighttimequeenanne.jpg/320px-Seattlenighttimequeenanne.jpg";
 var googleMapsClient = require('@google/maps').createClient({
-  key: googleMapsKey
+  key: GOOGLEMAPS_ID
 });
 
 var stepIndex = 0;
@@ -16,8 +18,8 @@ var stepIndex = 0;
 
 // Create bot
 var connector = new builder.ChatConnector({
-    appId: '3f593c14-a4b3-4dc2-a883-5e46e2b7550b',
-    appPassword: 'ayphH3VcKA6FqOrXXG5bW8a'
+    appId: MICROSOFT_ID,
+    appPassword: MICROSOFT_PASS
 	});
 
 var bot = new builder.UniversalBot(connector);
@@ -70,7 +72,7 @@ intents.matchesAny(quemaduras_regex, [
                 new builder.HeroCard(session)
                     .title("First degree burn")
                     .images([builder.CardImage.create(session, "http://i67.tinypic.com/j63ps0.jpg")])
-                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle")),
+                    .tap(builder.CardAction.dialogAction(session,"step",null,"Next Step")),
 
                 new builder.HeroCard(session)
                     .title("Second degree burn")
@@ -143,7 +145,7 @@ function getAssystanceAsync(onAssistanceReady) {
 function buidImageUrlFromHospital(hospital) {
     if (hospital.photos != undefined && hospital.photos.length > 0) {
         return ("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="
-        + hospital.photos[0].photo_reference + "&sensor=false&key=" + googleMapsKey);
+        + hospital.photos[0].photo_reference + "&sensor=false&key=" + GOOGLEMAPS_ID);
     }
     else return dummyImage;
 
@@ -219,8 +221,8 @@ var steps_second_grade = ["http://i67.tinypic.com/33lmfk6.jpg"];
 bot.dialog('/step', [
     function (session, args) {
         if (stepIndex < steps_first_grade.length) {
-            stepIndex += 1;
-            session.send(getStepMessage(session, steps_first_grade[stepIndex - 1]));
+            session.send(getStepMessage(session, steps_first_grade[stepIndex]));
+            stepIndex++;
         }
         session.endDialog();
     }
