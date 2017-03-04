@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Howarto/hackupc2017-carebot#readme",
   "dependencies": {
+    "@google/maps": "^0.3.1",
     "botbuilder": "^3.6.0",
     "restify": "^4.3.0"
   }
