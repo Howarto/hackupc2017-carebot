@@ -66,7 +66,7 @@ intents.matchesAny(quemaduras_regex, '/quemaduras/showdegree');
 
 bot.dialog('/quemaduras/showdegree', [
         function (session) {
-        session.send("Good. First of all choose the image that seems like your burn.");
+        session.send("Don't worry. First of all choose the image that seems like your burn.");
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
             .attachmentLayout('carousel')   // Horizontal to swipe!
