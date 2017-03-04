@@ -50,15 +50,17 @@ server.listen(process.env.port || 3978, function () {
 // Bots Dialogs
 //=========================================================
 
-bot.dialog('/', function (session) {
-    session.send("Hello World!");
-    session.beginDialog('/presentacion');
-});
-
-
 
 var intents = new builder.IntentDialog();
-bot.dialog('/quemadura', [
+bot.dialog('/', intents);
+
+var quemaduras_regex = [/burn*/i, /blaze*/i, /char*/i, /heat*/i, /ignite*/i, /incinerate*/i, /light*/i,
+						/melt*/i, /scorch*/i, /smolder*/i, /torch*/i, /bake*/i, /brand*/i, /broil*/i,
+						/calcine*/i, /cauterize*/i, /combust*/i, /conflagrate*/i, /cremate*/i, /flare*/i,
+						/toast*/i, /be ablaze/i, /reduces to ashes/i];
+
+
+intents.matchesAny(quemaduras_regex, [
     function (session) {
         session.send("Good. First of all choose the image that seems like your burn.");
         var msg = new builder.Message(session)
@@ -87,27 +89,10 @@ bot.dialog('/quemadura', [
 
         ]);
         session.send(msg);
-        session.beginDialog('/otro');
     }
 ]);
 
-bot.dialog('/otro', [
-    function (session) {
-        session.send("Hi");
-    }
-]);
-
-
-
-/*
-Dialog de presentación
-*/
-bot.dialog('/presentacion', [
-    function (session) {
-        session.send('Hi! I\'m CareBot and I\'m ready to help you!');
-        session.beginDialog('/test');
-    }
-])
+intents.onDefault(builder.DialogAction.send('Hi, I\'m CareBot, your med assistant!'));
 
 bot.dialog('/test', [
     function (session) {
@@ -132,10 +117,13 @@ bot.dialog('/test', [
     }
 ]);
 
+
+var assistance_regex = [/assistance*/i, /aid*/i, /backing*/i, /service*/i, /support*/i, /help*/i,
+						/hospital*/i, /clinic*/i, /medical*/i, /emergency/i, /death*/i];
 /*
 Dialog de asistencia
 */
-bot.dialog('/asistencia', [
+intents.matchesAny(assistance_regex, [
     function (session) {
         getAssystanceAsync(function (hospitals) {
             var msg = new builder.Message(session)
