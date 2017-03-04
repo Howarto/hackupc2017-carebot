@@ -36,8 +36,15 @@ server.listen(process.env.port || 3978, function () {
 //=========================================================
 
 
+var quemaduras_regex = [/burn*/i, /blaze*/i, /char*/i, /heat*/i, /ignite*/i, /incinerate*/i, /light*/i,
+						/melt*/i, /scorch*/i, /smolder*/i, /torch*/i, /bake*/i, /brand*/i, /broil*/i,
+						/calcine*/i, /cauterize*/i, /combust*/i, /conflagrate*/i, /cremate*/i, /flare*/i,
+						/toast*/i, /be ablaze/i, /reduces to ashes/i];
+
+
 var intents = new builder.IntentDialog();
-bot.dialog('/', [
+bot.dialog('/', intents);
+intents.matchesAny(quemaduras_regex, [
     function (session) {
         session.send("Good. First of all choose the image that seems like your burn.");
         var msg = new builder.Message(session)
@@ -66,14 +73,7 @@ bot.dialog('/', [
         
         ]);
         session.send(msg);
-        session.beginDialog('/otro');
-    }
-]);
-
-bot.dialog('/otro', [
-    function (session) {
-        session.send("Hi");
-        session.endDialog(msg);
+        session.endDialog();
     }
 ]);
 
