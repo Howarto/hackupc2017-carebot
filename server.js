@@ -7,6 +7,8 @@ var googleMapsClient = require('@google/maps').createClient({
   key: googleMapsKey
 });
 
+var stepIndex = 0;
+
 
 //=========================================================
 // Bot&Server Setup
@@ -49,11 +51,8 @@ server.listen(process.env.port || 3978, function () {
 //=========================================================
 
 bot.dialog('/', function (session) {
-    session.sendTyping();
     session.send("Hello World!");
     session.beginDialog('/presentacion');
-    session.beginDialog('/quemadura');
-    session.endDialog();
 });
 
 
@@ -95,20 +94,10 @@ bot.dialog('/quemadura', [
 bot.dialog('/otro', [
     function (session) {
         session.send("Hi");
-        session.endDialog(msg);
     }
 ]);
 
-/*
-Dialog tratar quemadura
-*/
 
-function getStepsAttachments() {}
-bot.dialog('/tratarQuemadura', [
-    function (session) {
-
-    }
-])
 
 /*
 Dialog de presentación
@@ -116,10 +105,32 @@ Dialog de presentación
 bot.dialog('/presentacion', [
     function (session) {
         session.send('Hi! I\'m CareBot and I\'m ready to help you!');
-        session.beginDialog('/asistencia');
-        session.endDialog();
+        session.beginDialog('/test');
     }
 ])
+
+bot.dialog('/test', [
+    function (session) {
+        // Ask for dialog
+        builder.Prompts.text(session, "What dialog do you want to test?");
+    },
+    function (session, results) {
+        switch (results.response) {
+            case "asistencia":
+                session.beginDialog('/asistencia');
+                break;
+            case "tratarquemadura":
+                session.beginDialog('/tratarQuemadura');
+                break;
+            case "quemadura":
+                session.beginDialog('/quemadura');
+                break;
+            default:
+                session.send("default");
+                break;
+        }
+    }
+]);
 
 /*
 Dialog de asistencia
@@ -153,7 +164,6 @@ function buidImageUrlFromHospital(hospital) {
 function getHospitalAttachments(session, hospitals) {
     var attachments = [];
     for (var i = 0; i < hospitals.length; ++i) {
-        console.log("kek" + " " +hospitals[i].name)
         attachments[i] = (new builder.HeroCard(session)
                     .title(hospitals[i].name)
                     .subtitle(hospitals[i].name)
@@ -185,3 +195,47 @@ function getHospitals(radious, onAssistanceReady) {
         }
     });
 }
+
+
+/*
+Dialog tratar quemadura
+*/
+bot.dialog('/tratarQuemadura', [
+    function (session) {
+        stepIndex = 0;
+        session.beginDialog('/step');
+    }
+])
+
+function getStepMessage(session, step) {
+    return (new builder.Message(session)
+                .textFormat(builder.TextFormat.xml)
+                .attachmentLayout(builder.AttachmentLayout.list)
+                .attachments([
+                    new builder.HeroCard(session)
+                    .images([
+                        builder.CardImage.create(session, step)
+                    ])
+                    .buttons([
+                        builder.CardAction.dialogAction(session,"step",null,"Next Step")
+                    ])
+                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle"))
+                ]));
+}
+
+var steps_first_grade = ["http://i67.tinypic.com/2drzbcy.jpg",
+                         "http://i68.tinypic.com/33elers.jpg",
+                         "http://i67.tinypic.com/33lmfk6.jpg"];
+var steps_second_grade = ["http://i67.tinypic.com/33lmfk6.jpg"];
+
+bot.dialog('/step', [
+    function (session, args) {
+        if (stepIndex < steps_first_grade.length) {
+            stepIndex += 1;
+            session.send(getStepMessage(session, steps_first_grade[stepIndex - 1]));
+        }
+        session.endDialog();
+    }
+]);
+
+bot.beginDialogAction('step','/step');
