@@ -1,0 +1,26 @@
+{
+  "name": "CareBot",
+  "version": "1.0.0",
+  "description": "CareBot, your med assistant",
+  "main": "server.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Howarto/hackupc2017-carebot.git"
+  },
+  "keywords": [
+    "botframework"
+  ],
+  "author": "YOLO",
+  "license": "Freeeeee, be freeeeee",
+  "bugs": {
+    "url": "https://github.com/Howarto/hackupc2017-carebot/issues"
+  },
+  "homepage": "https://github.com/Howarto/hackupc2017-carebot#readme",
+  "dependencies": {
+    "botbuilder": "^3.6.0",
+    "restify": "^4.3.0"
+  }
+}
