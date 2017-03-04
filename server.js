@@ -93,6 +93,7 @@ bot.dialog('/quemaduras/showdegree', [
 
         ]);
         session.send(msg);
+        session.endDialog();
     }
 ]);
 
@@ -125,6 +126,7 @@ bot.dialog('/test', [
                 session.send("default");
                 break;
         }
+        session.endDialog();
     }
 ]);
 
@@ -206,6 +208,7 @@ bot.dialog('/tratarQuemadura', [
     function (session) {
         stepIndex = 0;
         session.beginDialog('/step');
+        session.endDialog();
     }
 ])
 
@@ -275,8 +278,48 @@ bot.dialog('/groupexclusions', [
                         ])
                 ]);
         session.send(buttons);
+        session.endDialog();
     }
 ]);
+
+var sprain_regex = [
+/twist*/i,
+/sprain*/i,
+/ligament*/i,
+/curve*/i,
+/bend*/i,
+/knock*/i,
+/swivel*/i,
+/torsion*/i,
+/twine*/i,
+/warp*/i,
+/distort*/i,
+/wrench*/i,
+/warp*/i,
+/wring*/i,
+/yank*/i,
+/stretch*/i,
+/torn*/i
+];
+
+var knock_regex = [
+/hit*/i,
+/slue*/i,
+/bend*/i,
+/enshroud*/i,
+/hit*/i,
+/coup*/i,
+/beat*/i,
+/knock*/i,
+/bang*/i,
+/kick*/i,
+/slap*/i,
+/smack*/i,
+/swat*/i,
+/swipe*/i,
+/thump*/i,
+/whack*/i,
+];
 
 bot.beginDialogAction('step','/step');
 bot.beginDialogAction('firstorseconddegreeresponse','/groupexclusions');
