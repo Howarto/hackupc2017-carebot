@@ -3,7 +3,7 @@ var builder = require('botbuilder');
 
 var MICROSOFT_ID = '3f593c14-a4b3-4dc2-a883-5e46e2b7550b';
 var MICROSOFT_PASS = 'ayphH3VcKA6FqOrXXG5bW8a';
-var GOOGLEMAPS_ID = 'AIzaSyAFne0T1t3aYW8AtWoevIHMEO0EmsW851M';
+var GOOGLEMAPS_ID = 'AIzaSyAFne0T1t3aYW8AtWoevIHMEO0EmsW851M'; // AIzaSyCdGma2YpPwV2v29z_sEglIqVyU7BvRqPU
 var dummyImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Seattlenighttimequeenanne.jpg/320px-Seattlenighttimequeenanne.jpg";
 var googleMapsClient = require('@google/maps').createClient({
   key: GOOGLEMAPS_ID
@@ -62,8 +62,10 @@ var quemaduras_regex = [/burn*/i, /blaze*/i, /char*/i, /heat*/i, /ignite*/i, /in
 						/toast*/i, /be ablaze/i, /reduces to ashes/i];
 
 
-intents.matchesAny(quemaduras_regex, [
-    function (session) {
+intents.matchesAny(quemaduras_regex, '/quemaduras/showdegree');
+
+bot.dialog('/quemaduras/showdegree', [
+        function (session) {
         session.send("Good. First of all choose the image that seems like your burn.");
         var msg = new builder.Message(session)
             .textFormat(builder.TextFormat.xml)
@@ -72,29 +74,36 @@ intents.matchesAny(quemaduras_regex, [
                 new builder.HeroCard(session)
                     .title("First degree burn")
                     .images([builder.CardImage.create(session, "http://i67.tinypic.com/j63ps0.jpg")])
-                    .tap(builder.CardAction.dialogAction(session,"step",null,"Next Step")),
+                    .buttons([builder.CardAction.dialogAction(session, "firstorseconddegreeresponse", null, "THIS")]),
 
                 new builder.HeroCard(session)
                     .title("Second degree burn")
                     .images([builder.CardImage.create(session, "http://i68.tinypic.com/34rjcqs.jpg")])
-                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle")),
+                    .buttons([builder.CardAction.dialogAction(session, "firstorseconddegreeresponse", null, "THIS")]),
 
-            new builder.HeroCard(session)
-                    .title("Second degree burn")
-                    .images([builder.CardImage.create(session, "http://i65.tinypic.com/1zfk1v5.jpg")])
-                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle")),
+                new builder.HeroCard(session)
+                        .title("Second degree burn")
+                        .images([builder.CardImage.create(session, "http://i65.tinypic.com/1zfk1v5.jpg")])
+                        .buttons([builder.CardAction.dialogAction(session, "firstorseconddegreeresponse", null, "THIS")]),
 
-            new builder.HeroCard(session)
-                    .title("Thirst degree burn")
-                    .images([builder.CardImage.create(session, "http://i63.tinypic.com/14jumwh.jpg")])
-                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle"))
+                new builder.HeroCard(session)
+                        .title("Thirst degree burn")
+                        .images([builder.CardImage.create(session, "http://i63.tinypic.com/14jumwh.jpg")])
+                        .buttons([builder.CardAction.dialogAction(session, "thirstdegreeresponse", null, "THIS")]),
 
         ]);
         session.send(msg);
     }
 ]);
 
-intents.onDefault(builder.DialogAction.send('Hi, I\'m CareBot, your med assistant!'));
+var saludos = ['Hi, I\'m CareBot, your med assistant!', 'What can I do for you?', 'Hi!', 'Have you got a burn or sprain?',
+                'I\'m CareBot! BALE!?', 'CareBot, the med hidden behind a program!'];
+intents.onDefault(
+    function(session) {
+        var rand = Math.floor((Math.random()*10) + 1)%saludos.length;
+        session.send(saludos[rand]);
+    }
+);
 
 bot.dialog('/test', [
     function (session) {
@@ -125,8 +134,11 @@ var assistance_regex = [/assistance*/i, /aid*/i, /backing*/i, /service*/i, /supp
 /*
 Dialog de asistencia
 */
-intents.matchesAny(assistance_regex, [
+intents.matchesAny(assistance_regex, '/assistance');
+
+bot.dialog('/assistance', [
     function (session) {
+        session.send("Please, go to the more near hospital.");
         getAssystanceAsync(function (hospitals) {
             var msg = new builder.Message(session)
                 .textFormat(builder.TextFormat.xml)
@@ -143,7 +155,7 @@ function getAssystanceAsync(onAssistanceReady) {
 
 }
 function buidImageUrlFromHospital(hospital) {
-    if (hospital.photos != undefined && hospital.photos.length > 0) {
+    if (hospital.photos != null && hospital.photos.length > 0) {
         return ("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="
         + hospital.photos[0].photo_reference + "&sensor=false&key=" + GOOGLEMAPS_ID);
     }
@@ -216,7 +228,6 @@ function getStepMessage(session, step) {
 var steps_first_grade = ["http://i67.tinypic.com/2drzbcy.jpg",
                          "http://i68.tinypic.com/33elers.jpg",
                          "http://i67.tinypic.com/33lmfk6.jpg"];
-var steps_second_grade = ["http://i67.tinypic.com/33lmfk6.jpg"];
 
 bot.dialog('/step', [
     function (session, args) {
@@ -224,8 +235,50 @@ bot.dialog('/step', [
             session.send(getStepMessage(session, steps_first_grade[stepIndex]));
             stepIndex++;
         }
+        else {
+            session.send("FINISH!\nIf you need something more... so call me maybe(8)!");
+        }
         session.endDialog();
     }
 ]);
 
+bot.dialog('/groupexclusions', [
+    function (session, args) {
+
+        session.send("Have you got any of these conditions?");
+        var list = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("Have you got more than 70 years or less than 10?"),
+
+                new builder.HeroCard(session)
+                    .title("Have you got a burn more bigger than your forearm?"),
+
+                new builder.HeroCard(session)
+                    .title("Have you got a burn on genitales or face?"),
+
+                new builder.HeroCard(session)
+                    .title("Seems that the burn is infectated?")
+
+        ]);
+        session.send(list);
+
+        var buttons = new builder.Message(session)
+                    .textFormat(builder.TextFormat.xml)
+                    .attachmentLayout(builder.AttachmentLayout.list)
+                    .attachments([
+                        new builder.HeroCard(session)
+                        .buttons([
+                            builder.CardAction.dialogAction(session, "assistance", null, "YES"),
+                            builder.CardAction.dialogAction(session, "step", null, "NO")
+                        ])
+                ]);
+        session.send(buttons);
+    }
+]);
+
 bot.beginDialogAction('step','/step');
+bot.beginDialogAction('firstorseconddegreeresponse','/groupexclusions');
+bot.beginDialogAction('thirstdegreeresponse','/assistance');
+bot.beginDialogAction('assistance','/assistance');
