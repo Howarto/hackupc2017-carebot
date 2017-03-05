@@ -101,8 +101,8 @@ bot.dialog('/quemaduras/showdegree', [
     }
 ]);
 
-var saludos = ['Hi, I\'m CareBot, your med assistant!', 'What can I do for you?', 'Hi!', 'Have you got a burn or sprain?',
-                'I\'m CareBot! BALE!?', 'CareBot, the med hidden behind a program!'];
+var saludos = ['Hi! I\'m Carebot. You must know that you can reset me saying \'goodbye\'', 'Hi, I\'m CareBot, your med assistant!',
+               'What can I do for you?', 'Hi!', 'Have you got a burn or sprain?', 'I\'m CareBot! BALE!?', 'CareBot, the med hidden behind a program!'];
 intents.onDefault(
     function(session) {
         var rand = Math.floor((Math.random()*10) + 1)%saludos.length;
