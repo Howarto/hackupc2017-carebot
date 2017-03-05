@@ -201,7 +201,7 @@ bot.dialog('/assistance', [
         getAssystanceAsync(function (hospitals) {
             var msg = new builder.Message(session)
                 .textFormat(builder.TextFormat.xml)
-                .attachmentLayout(builder.AttachmentLayout.carousel)
+                .attachmentLayout('list')
                 .attachments(getHospitalAttachments(session, hospitals));
             session.send(msg);
             session.endConversation();
