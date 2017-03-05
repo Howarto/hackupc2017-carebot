@@ -198,7 +198,7 @@ intents.matchesAny(assistance_regex, '/assistance');
 bot.dialog('/assistance', [
     function (session) {
         session.send("Please, go to the more near hospital.");
-        getAssystanceAsync(function (hospitals) {
+        getAssystanceAsync(session,function (hospitals) {
             var msg = new builder.Message(session)
                 .textFormat(builder.TextFormat.xml)
                 .attachmentLayout(builder.AttachmentLayout.carousel)
@@ -209,8 +209,8 @@ bot.dialog('/assistance', [
     }
 ]);
 
-function getAssystanceAsync(onAssistanceReady) {
-    getHospitals(500, onAssistanceReady);
+function getAssystanceAsync(session, onAssistanceReady) {
+    getHospitals(session, 500, onAssistanceReady);
 
 }
 function buidImageUrlFromHospital(hospital) {
@@ -238,7 +238,7 @@ function getHospitalAttachments(session, hospitals) {
 /*
 Gets the nearest hospitals near your location given a radious
 */
-function getHospitals(radious, onAssistanceReady) {
+function getHospitals(session, radious, onAssistanceReady) {
     googleMapsClient.places({
       query: 'hospital',
       //very hardcoded due to localhost (ip based)
@@ -248,10 +248,11 @@ function getHospitals(radious, onAssistanceReady) {
     }, function(err, response) {
         if (!err) {
             var hospitals = response.json.results;
+            session.send("CHECK:" + err);
             onAssistanceReady(hospitals);
         }
         else {
-            console.log(err);
+            session.send(err);
         }
     });
 }
