@@ -24,6 +24,11 @@ var connector = new builder.ChatConnector({
 
 var bot = new builder.UniversalBot(connector);
 
+// Reset after a version
+bot.use(builder.Middleware.dialogVersion({version: 1.0, resetCommand: /^reset/i}));
+// Global command
+bot.endConversationAction('goodbye', 'Goodbye :)', {matches: /^goodbye/i});
+
 // Setup Restify Server
 var server = restify.createServer();
 
@@ -56,10 +61,10 @@ server.listen(process.env.port || 3978, function () {
 var intents = new builder.IntentDialog();
 bot.dialog('/', intents);
 
-var quemaduras_regex = [/burn*/i, /blaze*/i, /char*/i, /heat*/i, /ignite*/i, /incinerate*/i, /light*/i,
-						/melt*/i, /scorch*/i, /smolder*/i, /torch*/i, /bake*/i, /brand*/i, /broil*/i,
-						/calcine*/i, /cauterize*/i, /combust*/i, /conflagrate*/i, /cremate*/i, /flare*/i,
-						/toast*/i, /be ablaze/i, /reduces to ashes/i];
+var quemaduras_regex = [/burn.*/i, /blaze.*/i, /char.*/i, /heat.*/i, /ignite.*/i, /incinerate.*/i, /light.*/i,
+						/melt.*/i, /scorch.*/i, /smolder.*/i, /torch.*/i, /bake.*/i, /brand.*/i, /broil.*/i,
+						/calcine.*/i, /cauterize.*/i, /combust.*/i, /conflagrate.*/i, /cremate.*/i, /flare.*/i,
+						/toast.*/i, /be ablaze/i, /reduces to ashes/i];
 
 
 intents.matchesAny(quemaduras_regex, '/quemaduras/showdegree');
@@ -96,6 +101,12 @@ bot.dialog('/quemaduras/showdegree', [
     }
 ]);
 
+var sprain_regex = [/twist.*/i, /sprain.*/i, /ligament.*/i, /curve.*/i, /bend.*/i, /swivel.*/i, /torsion.*/i, /twine.*/i,
+/warp.*/i, /distort.*/i, /wrench.*/i, /wring.*/i, /yank.*/i, /stretch.*/i, /torn.*/i];
+
+var knock_regex = [/slue.*/i, /enshroud.*/i, /hit.*/i, /coup.*/i, /beat.*/i, /knock.*/i, /bang.*/i, /kick.*/i, /slap.*/i,
+/smack.*/i, /swat.*/i, /swipe.*/i, /thump.*/i, /whack.*/i];
+
 intents.matchesAny(sprain_regex.concat(knock_regex), '/lesion/showtypes');
 
 bot.dialog("/lesion/showtypes", [
@@ -107,7 +118,7 @@ bot.dialog("/lesion/showtypes", [
             .attachments([
                 new builder.HeroCard(session)
                     .title("Wound")
-                    .images([builder.CardImage.create(session, "http://i67.tinypic.com/j63ps0.jpg")])
+                    .images([builder.CardImage.create(session, "http://i67.tinypic.com/35kpvnq.jpg")])
                     .buttons([builder.CardAction.dialogAction(session, "heridaresponse", null, "THIS")]),
 
                 new builder.HeroCard(session)
@@ -157,12 +168,13 @@ bot.dialog('/test', [
                 session.send("default");
                 break;
         }
+        session.endDialog();
     }
 ]);
 
 
-var assistance_regex = [/assistance*/i, /aid*/i, /backing*/i, /service*/i, /support*/i, /help*/i,
-						/hospital*/i, /clinic*/i, /medical*/i, /emergency/i, /death*/i];
+var assistance_regex = [/assistance.*/i, /aid.*/i, /backing.*/i, /service.*/i, /support.*/i, /help.*/i,
+						/hospital.*/i, /clinic.*/i, /medical.*/i, /emergency/i, /death.*/i];
 /*
 Dialog de asistencia
 */
@@ -177,7 +189,6 @@ bot.dialog('/assistance', [
                 .attachmentLayout(builder.AttachmentLayout.carousel)
                 .attachments(getHospitalAttachments(session, hospitals));
             session.send(msg);
-            session.endDialog();
         });
     }
 ]);
@@ -268,7 +279,7 @@ bot.dialog('/step', [
             stepIndex++;
         }
         else {
-            session.send("FINISH!\nIf you need something more... so call me maybe(8)!");
+            session.endConversation("FINISH!\nIf you need something more... so call me maybe(8)!")
         }
         session.endDialog();
     }
@@ -346,6 +357,8 @@ bot.dialog('/hemorragia_continua', [
         session.send(msg);
     }
 ])
+
+
 
 
 bot.beginDialogAction('step','/step');
