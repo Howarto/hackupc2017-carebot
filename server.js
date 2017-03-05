@@ -198,22 +198,16 @@ intents.matchesAny(assistance_regex, '/assistance');
 bot.dialog('/assistance', [
     function (session) {
         session.send("Please, go to the more near hospital.");
-        //getAssystanceAsync(
-           // function (hospitals) {
+        getAssystanceAsync(function (hospitals) {
             var msg = new builder.Message(session)
                 .textFormat(builder.TextFormat.xml)
-                .attachmentLayout('carousel')
-                .attachments([new builder.HeroCard(session)
-                    .title("Second degree burn")
-                    .images([builder.CardImage.create(session, "http://i68.tinypic.com/34rjcqs.jpg")])
-                    .buttons([builder.CardAction.dialogAction(session, "firstorseconddegreeresponse", null, "THIS")])]);
+                .attachmentLayout(builder.AttachmentLayout.carousel)
+                .attachments(getHospitalAttachments(session, hospitals));
             session.send(msg);
-
-            
-        //});
+            session.endConversation();
+        });
     }
-]
-);
+]);
 
 function getAssystanceAsync(onAssistanceReady) {
     getHospitals(500, onAssistanceReady);
