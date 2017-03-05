@@ -87,14 +87,14 @@ bot.dialog('/quemaduras/showdegree', [
                     .buttons([builder.CardAction.dialogAction(session, "firstorseconddegreeresponse", null, "THIS")]),
 
                 new builder.HeroCard(session)
-                        .title("Second degree burn")
-                        .images([builder.CardImage.create(session, "http://i65.tinypic.com/1zfk1v5.jpg")])
-                        .buttons([builder.CardAction.dialogAction(session, "firstorseconddegreeresponse", null, "THIS")]),
+                    .title("Second degree burn")
+                    .images([builder.CardImage.create(session, "http://i65.tinypic.com/1zfk1v5.jpg")])
+                    .buttons([builder.CardAction.dialogAction(session, "firstorseconddegreeresponse", null, "THIS")]),
 
                 new builder.HeroCard(session)
-                        .title("Thirst degree burn")
-                        .images([builder.CardImage.create(session, "http://i63.tinypic.com/14jumwh.jpg")])
-                        .buttons([builder.CardAction.dialogAction(session, "thirstdegreeresponse", null, "THIS")]),
+                    .title("Thirst degree burn")
+                    .images([builder.CardImage.create(session, "http://i63.tinypic.com/14jumwh.jpg")])
+                    .buttons([builder.CardAction.dialogAction(session, "thirstdegreeresponse", null, "THIS")]),
 
         ]);
         session.send(msg);
@@ -204,6 +204,7 @@ bot.dialog('/assistance', [
                 .attachmentLayout(builder.AttachmentLayout.carousel)
                 .attachments(getHospitalAttachments(session, hospitals));
             session.send(msg);
+            session.endConversation();
         });
     }
 ]);
@@ -230,8 +231,7 @@ function getHospitalAttachments(session, hospitals) {
                     .text(hospitals[i].formatted_address)
                     .images([
                         builder.CardImage.create(session, buidImageUrlFromHospital(hospitals[i]))
-                    ])
-                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle")))
+                    ]))
     }
     return attachments;
 }
@@ -279,7 +279,6 @@ function getStepMessage(session, step) {
                     .buttons([
                         builder.CardAction.dialogAction(session,"step",null,"Next Step")
                     ])
-                    .tap(builder.CardAction.openUrl(session, "https://en.wikipedia.org/wiki/Space_Needle"))
                 ]));
 }
 
