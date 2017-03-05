@@ -24,6 +24,11 @@ var connector = new builder.ChatConnector({
 
 var bot = new builder.UniversalBot(connector);
 
+// Reset after a version
+bot.use(builder.Middleware.dialogVersion({version: 1.0, resetCommand: /^reset/i}));
+// Global command
+bot.endConversationAction('goodbye', 'Goodbye :)', {matches: /^goodbye/i});
+
 // Setup Restify Server
 var server = restify.createServer();
 
