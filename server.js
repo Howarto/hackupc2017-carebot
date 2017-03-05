@@ -241,7 +241,7 @@ bot.dialog('/step', [
             stepIndex++;
         }
         else {
-            session.send("FINISH!\nIf you need something more... so call me maybe(8)!");
+            session.endConversation("FINISH!\nIf you need something more... so call me maybe(8)!")
         }
         session.endDialog();
     }
