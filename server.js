@@ -353,12 +353,12 @@ bot.dialog('/herida',[
 
                 new builder.HeroCard(session)
                     .title("Object stuck")
-                    .images([builder.CardImage.create(session, "http://i68.tinypic.com/34rjcqs.jpg")])
+                    .images([builder.CardImage.create(session, "http://i67.tinypic.com/2vmvmgk.jpg")])
                     .buttons([builder.CardAction.dialogAction(session, "assistance", null, "THIS")]),
 
                 new builder.HeroCard(session)
                     .title("Infected")
-                    .images([builder.CardImage.create(session, "http://i67.tinypic.com/2vmvmgk.jpg")])
+                    .images([builder.CardImage.create(session, "http://i65.tinypic.com/vnmuix.jpg")])
                     .buttons([builder.CardAction.dialogAction(session, "assistance", null, "THIS")])
         ]);
         session.send(msg);
