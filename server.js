@@ -96,6 +96,38 @@ bot.dialog('/quemaduras/showdegree', [
     }
 ]);
 
+intents.matchesAny(sprain_regex.concat(knock_regex), '/lesion/showtypes');
+
+bot.dialog("/lesion/showtypes", [
+    function (session) {
+        session.send("Don't worry. First of all choose the image that seems like your lesion.");
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachmentLayout('carousel')   // Horizontal to swipe!
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("Wound")
+                    .images([builder.CardImage.create(session, "http://i67.tinypic.com/j63ps0.jpg")])
+                    .buttons([builder.CardAction.dialogAction(session, "heridaresponse", null, "THIS")]),
+
+                new builder.HeroCard(session)
+                    .title("Twist like")
+                    .images([builder.CardImage.create(session, "http://i68.tinypic.com/34rjcqs.jpg")])
+                    .buttons([builder.CardAction.dialogAction(session, "torceduraresponse", null, "THIS")]),
+
+                new builder.HeroCard(session)
+                        .title("hit like")
+                        .images([builder.CardImage.create(session, "http://i65.tinypic.com/1zfk1v5.jpg")])
+                        .buttons([builder.CardAction.dialogAction(session, "moradoresponse", null, "THIS")]),
+
+            ]);
+        session.send(msg);
+    }
+
+])
+
+
+
 var saludos = ['Hi, I\'m CareBot, your med assistant!', 'What can I do for you?', 'Hi!', 'Have you got a burn or sprain?',
                 'I\'m CareBot! BALE!?', 'CareBot, the med hidden behind a program!'];
 intents.onDefault(
@@ -278,7 +310,54 @@ bot.dialog('/groupexclusions', [
     }
 ]);
 
+bot.dialog('/herida',[
+    function(session) {
+        var msg = new builder.Message(session)
+            .textFormat(builder.TextFormat.xml)
+            .attachmentLayout('carousel')   // Horizontal to swipe!
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("Hemorragia")
+                    .images([builder.CardImage.create(session, "http://i67.tinypic.com/j63ps0.jpg")])
+                    .buttons([builder.CardAction.dialogAction(session, "hemorragiaresponse", null, "THIS")]),
+
+                new builder.HeroCard(session)
+                    .title("Objeto incrustado")
+                    .images([builder.CardImage.create(session, "http://i68.tinypic.com/34rjcqs.jpg")])
+                    .buttons([builder.CardAction.dialogAction(session, "objetoincrustadoresponse", null, "THIS")])
+        ]);
+        session.send(msg);
+    }
+]);
+
+bot.dialog('/hemorragia_continua', [
+    function(session) {
+        var msg = new builder.Message(session)
+                    .text("Is the hemorrhage decreasing?")
+                    .textFormat(builder.TextFormat.xml)
+                    .attachmentLayout(builder.AttachmentLayout.list)
+                    .attachments([
+                        new builder.HeroCard(session)
+                        .buttons([
+                            builder.CardAction.dialogAction(session, "assistance", null, "YES"),
+                            builder.CardAction.dialogAction(session, "step", null, "NO")
+                        ])
+                    ]);
+        session.send(msg);
+    }
+])
+
+
 bot.beginDialogAction('step','/step');
 bot.beginDialogAction('firstorseconddegreeresponse','/groupexclusions');
 bot.beginDialogAction('thirstdegreeresponse','/assistance');
 bot.beginDialogAction('assistance','/assistance');
+
+
+bot.beginDialogAction('heridaresponse','/herida');
+bot.beginDialogAction('torceduraresponse','/torcedura');
+bot.beginDialogAction('moradoresponse','/morado');
+
+
+bot.beginDialogAction('hemorragiaresponse','/hemorragia_continua');
+bot.beginDialogAction('objetoincrustadoresponse','/assistance');
