@@ -98,7 +98,6 @@ bot.dialog('/quemaduras/showdegree', [
 
         ]);
         session.send(msg);
-        session.endDialog();
     }
 ]);
 
@@ -152,7 +151,6 @@ bot.dialog('/assistance', [
                 .attachmentLayout(builder.AttachmentLayout.carousel)
                 .attachments(getHospitalAttachments(session, hospitals));
             session.send(msg);
-            session.endDialog();
         });
     }
 ]);
@@ -213,7 +211,6 @@ bot.dialog('/tratarQuemadura', [
     function (session) {
         stepIndex = 0;
         session.beginDialog('/step');
-        session.endDialog();
     }
 ])
 
@@ -283,7 +280,6 @@ bot.dialog('/groupexclusions', [
                         ])
                 ]);
         session.send(buttons);
-        session.endDialog();
     }
 ]);
 
