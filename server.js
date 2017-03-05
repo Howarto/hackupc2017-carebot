@@ -183,6 +183,7 @@ bot.dialog('/test', [
                 session.send("default");
                 break;
         }
+        session.endDialog();
     }
 ]);
 
@@ -203,6 +204,7 @@ bot.dialog('/assistance', [
                 .attachmentLayout(builder.AttachmentLayout.carousel)
                 .attachments(getHospitalAttachments(session, hospitals));
             session.send(msg);
+            session.endConversation();
         });
     }
 ]);
@@ -224,11 +226,11 @@ function getHospitalAttachments(session, hospitals) {
     var attachments = [];
     for (var i = 0; i < hospitals.length; ++i) {
         attachments[i] = (new builder.HeroCard(session)
-                    .title("lol")
-                    .subtitle("lol")
-                    .text("lol")
+                    .title(hospitals[i].name)
+                    .subtitle(hospitals[i].name)
+                    .text(hospitals[i].formatted_address)
                     .images([
-                        builder.CardImage.create(session, dummyImage)
+                        builder.CardImage.create(session, buidImageUrlFromHospital(hospitals[i]))
                     ]))
     }
     return attachments;
@@ -291,8 +293,9 @@ bot.dialog('/step', [
             stepIndex++;
         }
         else {
-            session.send("FINISH!\nIf you need something more... so call me maybe(8)!")
+            session.endConversation("FINISH!\nIf you need something more... so call me maybe(8)!")
         }
+        session.endDialog();
     }
 ]);
 
@@ -390,7 +393,7 @@ bot.dialog('/bruisesstep',[
             step_counter_bruises++;
         }
         else {
-            session.send("FINISH!\nIf you need something more... so call me maybe(8)!")
+            session.endConversation("FINISH!\nIf you need something more... so call me maybe(8)!")
         }
     }
 ]);
@@ -468,7 +471,7 @@ bot.dialog('/twiststep',[
             step_counter_twist++;
         }
         else {
-            session.send("FINISH!\nAnd remember that you can ask me about the near hospitals!")
+            session.endConversation("FINISH!\nAnd remember that you can ask me about the near hospitals!")
         }
     }
 ]);
@@ -501,7 +504,7 @@ bot.dialog('/woundstep',[
             step_counter_wound++;
         }
         else {
-            session.send("FINISH!\n Sana sana culito de rana, si no se cura hoy se curará mañana!")
+            session.endConversation("FINISH!\n Sana sana culito de rana, si no se cura hoy se curará mañana!")
         }
     }
 ]);
